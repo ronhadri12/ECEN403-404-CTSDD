@@ -3,6 +3,7 @@
 
 import math
 
+
 def Next_Point(distance, angle, lat1, long1):
     #distance = float(input("Distance from current location (meters): "))
     distance = 10
@@ -38,9 +39,14 @@ def Next_Point(distance, angle, lat1, long1):
     long2 = long1 + delta_longitude         # Adds change in longitude to original longitude to give new longitude point
     lat2 = lat1 + delta_latitude            # Adds change in latitude to original latitude to give new latitude point
 
-    format_list = [lat2,long2]
+    list = [lat2,long2]
 
-    print (" New coordinate is ( {},{} )" .format(lat2,long2))
+    return list
 
 
-Next_Point(10,293,32.776664,-96.7969879)
+
+
+point_1 = Next_Point(10,293,32.776664,-96.7969879)
+
+print(point_1[0])
+print(point_1[1])
