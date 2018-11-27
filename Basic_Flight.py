@@ -59,7 +59,7 @@ while not vehicle.is_armable:
 
 
 
-while not vehicle.channels['5'] >= 1200:            
+while not vehicle.channels['5'] >= 1200:
 	print("Turn on manual mode: Flight Mode = 0")
 	time.sleep(1)
 
@@ -88,34 +88,38 @@ print("Stabilize")
 
 ############################################################################################
 # Manual flight
+
 while vehicle.channels['5'] >= 1200:		#if Flight Mode = 0 or 1 on controller
-	vehicle.mode = VehicleMode("STABILIZE")
+
 	# A switch on the remote will be used to toggle drone being controlled
 	# by the user or the Raspberry Pi
 
-	if vehicle.channels['6'] > 1600:		#if Flight Mode = 0 on controller
+	if vehicle.channels['5'] > 1600:		#if Flight Mode = 0 on controller
 		lat_ant = vehicle.location.global_frame.lat	#sets antenna latitude
 		long_ant = vehicle.location.global_frame.long	#sets antenna londitude
 		alt_ant = vehicle.location.global_frame.alt	#sets antenna altitude
 		heading = vehicle.heading					#sets compass heading of drone at antenna
 
+if heading >= 120 and heading <=240:
+	degree_left = heading - 120 			# heading for far left of pattern (starting facing the antenna)
+	degree_right = heading + 120			# heading for far right of pattern (starting facing the antenna)
+elif heading < 120:							# vehicle.heading has a range of 0-360
+	degree_left = 360 - (heading - 120)
+	degree_right = heading + 120
+elif heading > 240:
+	degree_left = heading - 120
+	degree_right = 0 + (360 - heading)
+
+point_1 = Next_Point(far_field, degree_left, lat_ant, long_ant,alt_ant) #calculates first point
+
+vehicle.mode = VehicleMode("GUIDED")
 
 ################################################################################################
 # Autonomous Flight
 while vehicle.channels['5'] < 1200:		#if Flight Mode = 2 on controller
 
-	if heading >= 120 and heading <=240:
-		degree_left = heading - 120 			# heading for far left of pattern (starting facing the antenna)
-		degree_right = heading + 120			# heading for far right of pattern (starting facing the antenna)
-	elif heading < 120:							# vehicle.heading has a range of 0-360
-		degree_left = 360 - (heading - 120)
-		degree_right = heading + 120
-	elif heading > 240:
-		degree_left = heading - 120
-		degree_right = 0 + (360 - heading)
 
-	point_1 = Next_Point(far_field, degree_left, lat_ant, long_ant,alt_ant) #calculates first point
-
-	vehicle.mode = VehicleMode("GUIDED")
 
 	vehicle.simple_goto(point_1, 0.5)	# Commands the drone to go the the desired location at 0.5 m/s
+	time.sleep(1000)
+vehicle.mode = VehicleMode("STABILIZE")
