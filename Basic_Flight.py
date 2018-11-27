@@ -1,7 +1,3 @@
-# The following is used for controlling a Hexacopter using a
-# Raspberry Pi 3 Model B (RP3) and a Pixhawk 2.4.8, using Dronekit(Mavlink)
-
-
 
 
 # Import Dronekit-Python
@@ -44,10 +40,9 @@ antenna_frequency = float(input("Antenna Frequency: "))
 
 antenna_length = float(input("Antenna length: "))
 
+wavelength = ( 3 * (10 ** 8)) / antenna_frequency
 
-wavelength = float(( 3 * (10 ** 8)) / antenna_frequency)
-
-far_field = float((2 * (antenna_length ** 2)) / wavelength) # Far field calculation for antenna
+far_field = (2 * (antenna_length ** 2)) / wavelength # Far field calculation for antenna
 
 
 ########################################################################################################
@@ -64,7 +59,7 @@ while not vehicle.is_armable:
 
 
 
-while not vehicle.channels['5'] >= 1200:
+while not vehicle.channels['5'] >= 1200:            
 	print("Turn on manual mode: Flight Mode = 0")
 	time.sleep(1)
 
@@ -124,44 +119,3 @@ while vehicle.channels['5'] < 1200:		#if Flight Mode = 2 on controller
 	vehicle.mode = VehicleMode("GUIDED")
 
 	vehicle.simple_goto(point_1, 0.5)	# Commands the drone to go the the desired location at 0.5 m/s
-
-	z = 0								# variable for incrementing
-	point_list_arc1 = [0] * 60			# creates a list with 60 entries
-	point_list_arc1[0] = point_1
-	p1x_1 = far_field * math.sin(60)				#lines 128-136 are used to find the necessary distance to travel to next point on the first arc
-	p1y_1 = far_field * math.cos(60)
-	p2x_1 = far_field * math.sin(58)
-	p2y_1 = far_field * math.cos(58)
-	delta_x_1 = p2x_1 - p1x_1
-	delta_y_1 = p2y_1 - p1y_1
-	distance_change_1 = sqrt(delta_x_1 ** 2 + delta_y_1 ** 2)
-	current_point = [0] * 2
-
-	if degree_left >= 90:
-		arc_degree_left = degree_left - 90
-	elif degree_left < 90:
-		arc_degree_left = 360 - (90 - degree_left)			#lines 138-145 are used to find the starting and ending angle (heading) that the drone will travel to
-	if degree_right <= 270:
-		arc_degree_right = degree_right + 90
-	elif degree_right > 270:
-		arc_degree_right = 90 - (360 - degree_right)
-
-
-	for i in range(arc_degree_left,arc_degree_right,-2):	#iterates through and travels to 60 points with 2 degrees of change between them
-
-		current_point = point_list_arc1[z]
-		lat = current_point[0]
-		long = current_point[1]
-		point_list_arc1[z+1] = Next_Point(distance_change_1, i, lat,long, alt_ant)
-		z = z + 1
-		vehicle.simple_goto(point_list_arc1[z],0.5)
-		time.sleep(2)
-
-
-
-
-
-
-############################################################################################
-
-vehicle.mode = VehicleMode("STABILIZE")		#returns control back to user, in case of malfunction or end of flight path
