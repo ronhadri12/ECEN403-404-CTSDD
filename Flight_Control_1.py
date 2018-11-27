@@ -44,7 +44,6 @@ antenna_frequency = float(input("Antenna Frequency: "))
 
 antenna_length = float(input("Antenna length: "))
 
-
 wavelength = float(( 3 * (10 ** 8)) / antenna_frequency)
 
 far_field = float((2 * (antenna_length ** 2)) / wavelength) # Far field calculation for antenna
@@ -93,37 +92,42 @@ print("Stabilize")
 
 ############################################################################################
 # Manual flight
+
 while vehicle.channels['5'] >= 1200:		#if Flight Mode = 0 or 1 on controller
-	vehicle.mode = VehicleMode("STABILIZE")
+
 	# A switch on the remote will be used to toggle drone being controlled
 	# by the user or the Raspberry Pi
 
-	if vehicle.channels['6'] > 1600:		#if Flight Mode = 0 on controller
+	while vehicle.channels['5'] > 1600:		#if Flight Mode = 0 on controller
 		lat_ant = vehicle.location.global_frame.lat	#sets antenna latitude
 		long_ant = vehicle.location.global_frame.long	#sets antenna londitude
 		alt_ant = vehicle.location.global_frame.alt	#sets antenna altitude
 		heading = vehicle.heading					#sets compass heading of drone at antenna
 
+if heading >= 120 and heading <=240:
+	degree_left = heading - 120 			# heading for far left of pattern (starting facing the antenna)
+	degree_right = heading + 120			# heading for far right of pattern (starting facing the antenna)
+elif heading < 120:							# vehicle.heading has a range of 0-360
+	degree_left = 360 - (heading - 120)
+	degree_right = heading + 120
+elif heading > 240:
+	degree_left = heading - 120
+	degree_right = 0 + (360 - heading)
 
+point_1 = Next_Point(far_field, degree_left, lat_ant, long_ant,alt_ant) #calculates first point
 ################################################################################################
 # Autonomous Flight
+
+vehicle.mode = VehicleMode("GUIDED")
+
 while vehicle.channels['5'] < 1200:		#if Flight Mode = 2 on controller
 
-	if heading >= 120 and heading <=240:
-		degree_left = heading - 120 			# heading for far left of pattern (starting facing the antenna)
-		degree_right = heading + 120			# heading for far right of pattern (starting facing the antenna)
-	elif heading < 120:							# vehicle.heading has a range of 0-360
-		degree_left = 360 - (heading - 120)
-		degree_right = heading + 120
-	elif heading > 240:
-		degree_left = heading - 120
-		degree_right = 0 + (360 - heading)
 
-	point_1 = Next_Point(far_field, degree_left, lat_ant, long_ant,alt_ant) #calculates first point
+	velocity = float(0.5)
+	time_wait_1 = (far_field / velocity) + 2		#calculates time before next command is issued so drone can get to next location
 
-	vehicle.mode = VehicleMode("GUIDED")
-
-	vehicle.simple_goto(point_1, 0.5)	# Commands the drone to go the the desired location at 0.5 m/s
+	vehicle.simple_goto(point_1, velocity)	# Commands the drone to go the the desired location at 0.5 m/s
+	time.sleep(time_wait_1)
 
 	z = 0								# variable for incrementing
 	point_list_arc1 = [0] * 60			# creates a list with 60 entries
@@ -154,11 +158,14 @@ while vehicle.channels['5'] < 1200:		#if Flight Mode = 2 on controller
 		long = current_point[1]
 		point_list_arc1[z+1] = Next_Point(distance_change_1, i, lat,long, alt_ant)
 		z = z + 1
-		vehicle.simple_goto(point_list_arc1[z],0.5)
-		time.sleep(2)
+
+		time_wait_2 = (distance_change_1 / velocity) + 0.5
+		vehicle.simple_goto(point_list_arc1[z],velocity)
+
+		time.sleep(time_wait_2)					#calculates time before next command is issued so drone can get to next location
 
 
-
+	time.sleep(1000)
 
 
 
