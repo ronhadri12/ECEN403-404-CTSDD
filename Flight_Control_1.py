@@ -56,7 +56,7 @@ def Next_Point(distance, angle, lat1, long1, altitude):
     lat3 = lat1 + delta_latitude            # Adds change in latitude to original latitude to give new latitude point
 
 
-    return LocationGlobal(lat3,long3,altitude)
+    return [lat3,long3,altitude]
 
 #####################################################################################################################
 # User input values
@@ -135,7 +135,7 @@ elif heading > 240:
 	degree_left = heading - 120
 	degree_right = 0 + (360 - heading)
 
-point_1 = Next_Point(far_field, degree_left, lat_ant, long_ant,alt_ant) #calculates first
+point_1 = Next_Point(far_field, degree_left, lat_ant, long_ant,alt_ant) #calculates first point to fly to from antenna
 
 ################################################################################################
 # Autonomous Flight
@@ -145,10 +145,10 @@ vehicle.mode = VehicleMode("GUIDED")
 while vehicle.channels['5'] < 1200:		#if Flight Mode = 2 on controller
 
 
-	velocity = float(0.5)
+	velocity = float(0.5)							#Determines how fast the drone will fly
 	time_wait_1 = (far_field / velocity) + 2		#calculates time before next command is issued so drone can get to next location
 
-	vehicle.simple_goto(point_1, velocity)	# Commands the drone to go the the desired location at 0.5 m/s
+	vehicle.simple_goto(LocationGlobal(point_1[0], point_1[1], point_1[2]), velocity)	# Commands the drone to go the the desired location at 0.5 m/s
 	time.sleep(time_wait_1)
 
 	z = 0								# variable for incrementing
@@ -160,20 +160,20 @@ while vehicle.channels['5'] < 1200:		#if Flight Mode = 2 on controller
 	p2y_1 = far_field * math.cos(58)
 	delta_x_1 = p2x_1 - p1x_1
 	delta_y_1 = p2y_1 - p1y_1
-	distance_change_1 = sqrt(delta_x_1 ** 2 + delta_y_1 ** 2)
+	distance_change_1 = sqrt(delta_x_1 ** 2 + delta_y_1 ** 2)		#distance change between two points
 	current_point = [0] * 2
 
 	if degree_left >= 90:
 		arc_degree_left = degree_left - 90
 	elif degree_left < 90:
-		arc_degree_left = 360 - (90 - degree_left)			#lines 145-152 are used to find the starting and ending angle (heading) that the drone will travel to
+		arc_degree_left = 360 - (90 - degree_left)			#lines 166-173 are used to find the starting and ending angle (heading) that the drone will travel to
 	if degree_right <= 270:
 		arc_degree_right = degree_right + 90
 	elif degree_right > 270:
 		arc_degree_right = 90 - (360 - degree_right)
 
 
-	for i in range(arc_degree_left,arc_degree_right,-2):	#iterates through and travels to 60 points with 2 degrees of change between them
+	for i in range(arc_degree_left,arc_degree_right,-2):	#iterates through and travels to 60 points with 2 degrees of change between them (total of 120 degrees)
 
 		current_point = point_list_arc1[z]
 		lat = current_point[0]
