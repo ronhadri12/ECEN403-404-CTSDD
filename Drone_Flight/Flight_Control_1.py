@@ -146,11 +146,12 @@ while not vehicle.is_armable:
 
 
 while not vehicle.channels['5'] >= 1200:
-	print("Turn on manual mode: Flight Mode = 0")
+	print("Turn on manual mode(Flight Mode Switch = 1): Current Flight Mode Switch = 0")
 	time.sleep(1)
 
-
-vehicle.mode = VehicleMode("GUIDED")	#mode necessary to take off
+# Flight Mode Switch position 0 = Guided Mode
+# Flight Mode Switch position 1 = Manual Mode
+# Flight Mode Switch position 2 = Manual Mode and capture GPS location of antenna
 
 print("Mode: %s") %vehicle.mode.name
 
@@ -162,12 +163,7 @@ while not vehicle.armed:				#waits for vehicle to be armed
 print("Armed: %s") %vehicle.armed
 time.sleep(2)
 
-print("Taking off")
-vehicle.simple_takeoff(3)				#Takes off and flies up five meters and holds
 
-time.sleep(3)
-
-print("At height")
 
 vehicle.mode = VehicleMode("STABILIZE")		#enables user control
 
@@ -216,6 +212,8 @@ alt1 = point_1[2]                               # Extracts the altitude of the f
 ################################################################################################
 # Autonomous Flight
 
+vehicle.mode = VehicleMode("GUIDED")
+vehicle.mode = VehicleMode("GUIDED")
 vehicle.mode = VehicleMode("GUIDED")
 
 while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is in autonomous mode
@@ -267,4 +265,6 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
 
 ############################################################################################
 # Manual Control
+vehicle.mode = VehicleMode("STABILIZE")
+vehicle.mode = VehicleMode("STABILIZE")
 vehicle.mode = VehicleMode("STABILIZE")		# Returns control back to user, in case of malfunction or end of flight path
