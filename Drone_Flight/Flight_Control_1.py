@@ -176,14 +176,19 @@ while vehicle.channels['5'] >= 1200:		#if Flight Mode = 0 or 1 on controller, it
 
 	# A switch on the remote will be used to toggle drone being controlled
 	# by the user or the Raspberry Pi
-	print("In manual loop")
+    print("out loop")
 
-	while vehicle.channels['5'] > 1600:		#if Flight Mode = 0 on controller, it is gathering antenna coordinates
-		lat_ant = vehicle.location.global_frame.lat	#sets antenna latitude
-		long_ant = vehicle.location.global_frame.lon	#sets antenna londitude
-		alt_ant = vehicle.location.global_frame.alt	#sets antenna altitude
-		heading = vehicle.heading					#sets compass heading of drone at antenna
-		print("Heading recieved.")
+    while vehicle.channels['5'] > 1600:		#if Flight Mode = 0 on controller, it is gathering antenna coordinates
+	lat_ant = vehicle.location.global_frame.lat	#sets antenna latitude
+	long_ant = vehicle.location.global_frame.lon	#sets antenna londitude
+	alt_ant = vehicle.location.global_frame.alt	#sets antenna altitude
+	heading = vehicle.heading					#sets compass heading of drone at antenna
+        print("out loop")      
+print(heading)
+print(lat_ant)
+print(long_ant)
+print(alt_ant)
+print(far_field)
 
 
 if heading > 120 and heading <=240:
@@ -204,6 +209,7 @@ new_degree_right = Heading_to_unit_circle(degree_right)     # Converts right mos
 GPS_Coord_List = GPS_Coords(far_field, heading, lat_ant, long_ant, alt_ant, number_points) # Uses GPS_Coords function to calculate all points to fly to
 
 print("Got Coordinates")
+print(GPS_Coord_List)
 
 velocity = float(0.5)							# Determines how fast the drone will fly
 time_wait_1 = (far_field / velocity) + 0.5		# Calculates time (seconds) before next command is issued so drone can get to next location
