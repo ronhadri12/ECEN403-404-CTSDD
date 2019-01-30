@@ -239,7 +239,7 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
     distance_change_1 = math.sqrt(delta_x_1 ** 2 + delta_y_1 ** 2)
     time_wait_2 = (distance_change_1 / velocity) + 0.5    # Calculates time before next command is issued so drone can get to next location
 
-
+    print("test_1")
 
 
     for i in range(1,number_points,1):	# Iterates through and travels to specified number of points
@@ -252,21 +252,22 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
 
 	vehicle.simple_goto(LocationGlobal(lat_loop, long_loop, alt_loop),velocity)
 
-        for t in range(1,ceil(time_wait_2) * 2, 1):     # Continuously checks for operator overrride to return to manual control
+        for t in range(1,int(math.ceil(time_wait_2)) * 2, 1):     # Continuously checks for operator overrride to return to manual control
             if vehicle.channels['5'] >=  1200:
                 break
             time.sleep(0.5)
 
-
+    print("test_2")
 
     for t in range(1,1000, 1):                      # Drone waits for operator to take control once it has completed the path
         if vehicle.channels['5'] >=  1200:
             break
         time.sleep(0.5)
 
-
+    print("test_3")
 ############################################################################################
 # Manual Control
 vehicle.mode = VehicleMode("STABILIZE")
 vehicle.mode = VehicleMode("STABILIZE")
 vehicle.mode = VehicleMode("STABILIZE")		# Returns control back to user, in case of malfunction or end of flight path
+print("test_4")
