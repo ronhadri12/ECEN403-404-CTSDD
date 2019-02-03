@@ -223,13 +223,15 @@ alt1 = point_1[2]                               # Extracts the altitude of the f
 vehicle.mode = VehicleMode("GUIDED")
 vehicle.mode = VehicleMode("GUIDED")
 vehicle.mode = VehicleMode("GUIDED")
+for i in range(1,20,1):
+    print(vehicle.mode.name)
 
 while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is in autonomous mode
 
     if vehicle.channels['5'] >=  1200:
         break
 
-	vehicle.simple_goto(LocationGlobal(lat1, long1, alt1), velocity)	# Commands the drone to go the the desired location at 0.5 m/s
+	vehicle.simple_goto(LocationGlobal(lat1, long1, alt1), groundspeed = velocity)	# Commands the drone to go the the desired location at 0.5 m/s
 	time.sleep(time_wait_1)
 
     if vehicle.channels['5'] >=  1200:
@@ -256,7 +258,7 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
 	long_loop = current_point[1]              # Extracts the latidude of the next coordinate
         alt_loop = current_point[2]               # Extracts the altitude of the next coordinate
 
-	vehicle.simple_goto(LocationGlobal(lat_loop, long_loop, alt_loop),velocity)
+	vehicle.simple_goto(LocationGlobal(lat_loop, long_loop, alt_loop),groundspeed = velocity)
 
         for t in range(1,int(math.ceil(time_wait_2)) * 2, 1):     # Continuously checks for operator overrride to return to manual control
             if vehicle.channels['5'] >=  1200:
@@ -265,7 +267,7 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
 
     print("test_2")
 
-    for t in range(1,1000, 1):                      # Drone waits for operator to take control once it has completed the path
+    for t in range(1,10, 1):                      # Drone waits for operator to take control once it has completed the path
         if vehicle.channels['5'] >=  1200:
             break
         time.sleep(0.5)
