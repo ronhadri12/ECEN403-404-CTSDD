@@ -68,11 +68,7 @@ degree = Heading_to_unit_circle(heading)
 
 
 for i in range(0,11,1):                                                  # runs through 11 times, once per point
-    gain[i] = # Insert code to capture gain at this point
+    gain[i] = data.saveSignal(antenna_frequency, file_path)		# collect signal data
 
 
 output_list = Rons_Stuff(far_field, number_points, alt_ant, number_points, degree, gain)
-
-
-# Collect signal data
-data.saveSignal(antenna_frequency, file_path)
