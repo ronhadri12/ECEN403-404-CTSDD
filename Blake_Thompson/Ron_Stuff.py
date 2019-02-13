@@ -8,7 +8,7 @@ number_paths = 4                            # Number of paths to be run
 gain = [-20, -17,-16,-15,-14,-13,-14,-15,-16,-17,-20,-10,-7,-6,-5,-4,-3,-4,-5,-6,-7,-10,-7,-4,-3,-2,-1,0,-1,-2,-3,-4,-7,-17,-14,-13,-12,-11,-10,-11,-12,-13,-14,-17]
 degree = 120 / (number_points - 1)            # Angle between each point, referenced from antenna (degrees)
 
-def Rons_Stuff(far_field,number_points,height,number_paths,degree,gain):
+def Rons_Stuff(far_field,number_points,height,number_paths,degree):
 
     degree_polar = (degree  * math.pi)  / 180
 
@@ -36,19 +36,23 @@ def Rons_Stuff(far_field,number_points,height,number_paths,degree,gain):
     output = [0] * total_number_points                              # list that holds the info for each point
 
     #output = []
-    point_info_vector = [0] * 4                                 # list to hold the distance, theta, phi, and gain for each points
+    point_info_vector = [0] * 3                                 # list to hold the distance, theta, phi, and gain for each points
 
     for i in range(1,total_number_points+1,1):
-        point_info_vector=[0,0,0,0]                             # resets the point_info_vector to be filled in for loop
-        point_info_vector[0] = far_field                        # first entry is the distance from antenna
-        point_info_vector[1] = theta[ (i-1) / number_points ]   # second entry is the phi angle(angle from normal vector on horizontal plane)
+        point_info_vector=[0,0,0]                             # resets the point_info_vector to be filled in for loop
+
+        point_info_vector[1] = theta[ (i-1) / number_points ]   # second entry is the theta angle(angle from normal vector on horizontal plane)
 
         if ((i-1) / number_points) % 2 == 0:
-            point_info_vector[2] = phi[ ((i-1) % number_points) ]       # third entry is the theta angle (angle from vertical axis)
+            point_info_vector[2] = phi[ ((i-1) % number_points) ]       # third entry is the phi angle (angle from vertical axis)
         else:
             point_info_vector[2] = phi[ (10 - ((i-1) % 11)) ]
 
-        point_info_vector[3] = gain[i-1]                        # fourth entry is the gain value at the given location
+        final_degree = (point_info_vector[1] * math.pi) / 180       #converts phi angle to radians
+
+        point_info_vector[0] = far_field / math.cos(final_degree)   # first entry is the distance from antenna
+
+
 
         output[i-1] = point_info_vector                         # puts the point_info_vector into
 
@@ -56,5 +60,5 @@ def Rons_Stuff(far_field,number_points,height,number_paths,degree,gain):
     #print(i)
     #print(output[i-1])
 
-out = Rons_Stuff(far_field,number_points,height,number_paths,degree,gain)
+out = Rons_Stuff(far_field,number_points,height,number_paths,degree)
 print(out)
