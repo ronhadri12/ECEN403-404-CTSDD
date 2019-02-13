@@ -68,8 +68,7 @@ degree = Heading_to_unit_circle(heading)
 
 
 for i in range(0,11,1):                                                  # runs through 11 times, once per point
-
-    #Insert gain code here
+    data.saveSignal(antenna_frequency, file_path)
     time.sleep(15)
 
 
