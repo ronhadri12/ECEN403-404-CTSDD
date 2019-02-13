@@ -1,2 +1,1 @@
-# ECEN403-CTSDD
-# ECEN403-CTSDD
+# Senior Design - CTSDD
