@@ -21,7 +21,7 @@ while True:
         drive_name = raw_input("Please enter the name of the external drive: ")
         file_path = "/media/pi/" + drive_name
         # Check for specified external drive
-        while os.path.exists(file_path) != True:     
+        while os.path.exists(file_path) != True:
             drive_name = raw_input("The file path %s not exist. Export data "
                                    "to onboard storage? [Y/N] " % file_path)
             if drive_name == "Y" or drive_name == "y":
@@ -34,10 +34,10 @@ while True:
                 print("Please enter [Y] or [N].")
     else:
         print("Please enter [1] or [2].\n")
-    
-    # Confirm save location    
+
+    # Confirm save location
     confirm = raw_input("Data will be exported to: %s [Y/N] " % file_path)
-    
+
     if confirm == "Y" or confirm == "y":
         break
     elif confirm == "N" or confirm == "n":
@@ -68,7 +68,9 @@ degree = Heading_to_unit_circle(heading)
 
 
 for i in range(0,11,1):                                                  # runs through 11 times, once per point
-    gain[i] = data.saveSignal(antenna_frequency, file_path)		# collect signal data
+
+    #Insert gain code here
+    time.sleep(15)
 
 
-output_list = Rons_Stuff(far_field, number_points, alt_ant, number_points, degree, gain)
+output_list = Rons_Stuff(far_field, number_points, alt_ant, number_points, degree)
