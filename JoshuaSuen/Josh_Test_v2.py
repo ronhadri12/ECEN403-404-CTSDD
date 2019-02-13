@@ -9,30 +9,6 @@ import math
 import os
 import measurements as data
 
-far_field = 10
-number_paths = 1
-number_points = 11
-
-
-# Connect to the vehicle, perform checks, and give control of drone to user
-print("Connecting to a vehicle on: /dev/ttyS0")
-vehicle = connect('/dev/ttyS0',wait_ready = True, baud = 921600)	#Checks to see if the drone has booted, has GPS fix, and
-																		#comleted pre-arm
-
-
-heading = vehicle.heading					#sets compass heading of drone at antenna
-alt_ant = vehicle.location.global_frame.alt	#sets antenna altitude
-
-degree = Heading_to_unit_circle(heading)
-
-
-for i in range(0,11,1):                                                  # runs through 11 times, once per point
-    gain[i] = # Insert code to capture gain at this point
-
-
-output_list = Rons_Stuff(far_field, number_points, alt_ant, number_points, degree, gain)
-
-
 # Location to export data
 while True:
     storage = input("Where do you want to export the data?"
@@ -71,7 +47,32 @@ while True:
 
 print("Exporting data to: %s" % file_path)
 
-# Collect signal data
 antenna_frequency = float(input("Antenna Frequency: "))
 
+
+far_field = 10
+number_paths = 1
+number_points = 11
+
+
+# Connect to the vehicle, perform checks, and give control of drone to user
+print("Connecting to a vehicle on: /dev/ttyS0")
+vehicle = connect('/dev/ttyS0',wait_ready = True, baud = 921600)	#Checks to see if the drone has booted, has GPS fix, and
+																		#comleted pre-arm
+
+
+heading = vehicle.heading					#sets compass heading of drone at antenna
+alt_ant = vehicle.location.global_frame.alt	#sets antenna altitude
+
+degree = Heading_to_unit_circle(heading)
+
+
+for i in range(0,11,1):                                                  # runs through 11 times, once per point
+    gain[i] = # Insert code to capture gain at this point
+
+
+output_list = Rons_Stuff(far_field, number_points, alt_ant, number_points, degree, gain)
+
+
+# Collect signal data
 data.saveSignal(antenna_frequency, file_path)
