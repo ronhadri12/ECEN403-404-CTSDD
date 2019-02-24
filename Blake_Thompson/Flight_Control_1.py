@@ -149,9 +149,9 @@ while not vehicle.channels['5'] >= 1200:
 	print("Turn on manual mode(Flight Mode Switch = 1): Current Flight Mode Switch = 0")
 	time.sleep(1)
 
-# Flight Mode Switch position 0 = Guided Mode
+# Flight Mode Switch position 2 = Guided Mode
 # Flight Mode Switch position 1 = Manual Mode
-# Flight Mode Switch position 2 = Manual Mode and capture GPS location of antenna
+# Flight Mode Switch position 0 = Manual Mode and capture GPS location of antenna
 
 print("Mode: %s") %vehicle.mode.name
 
@@ -166,6 +166,7 @@ time.sleep(2)
 
 
 vehicle.mode = VehicleMode("STABILIZE")		#enables user control
+flush()
 
 print("Stabilize")
 
@@ -213,8 +214,13 @@ alt1 = point_1[2]                               # Extracts the altitude of the f
 # Autonomous Flight
 
 vehicle.mode = VehicleMode("GUIDED")
-vehicle.mode = VehicleMode("GUIDED")
-vehicle.mode = VehicleMode("GUIDED")
+vehicle.flush()
+
+while not vehicle.mode.name=='GUIDED':              # Checks to make sure vehicle is in GUIDED moded
+    print("Vehicle not in GUIDED mode")
+    vehicle.mode = VehicleMode("GUIDED")
+    vehicle.flush()
+    time.sleep(1)
 
 while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is in autonomous mode
 
@@ -236,7 +242,8 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
 	delta_y_1 = p2y_1 - p1y_1
 	distance_change_1 = sqrt(delta_x_1 ** 2 + delta_y_1 ** 2)
     time_wait_2 = (distance_change_1 / velocity) + 0.5    # Calculates time before next command is issued so drone can get to next location
-
+    print("Time_wait_2:", time_wait_2)
+    print("Time_wait_1:", time_wait_1)
 
 
 
@@ -266,5 +273,4 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
 ############################################################################################
 # Manual Control
 vehicle.mode = VehicleMode("STABILIZE")
-vehicle.mode = VehicleMode("STABILIZE")
-vehicle.mode = VehicleMode("STABILIZE")		# Returns control back to user, in case of malfunction or end of flight path
+vehicle.flush		# Returns control back to user, in case of malfunction or end of flight path
