@@ -6,7 +6,6 @@ from dronekit import connect, VehicleMode, time, LocationGlobal
 from Ron_Stuff import Rons_Stuff
 from Heading_to_unit_circle import Heading_to_unit_circle
 import math
-import os
 import measurements as data
 
 # Location to export data
