@@ -166,7 +166,7 @@ time.sleep(2)
 
 
 vehicle.mode = VehicleMode("STABILIZE")		#enables user control
-flush()
+vehicle.flush()
 
 print("Stabilize")
 
