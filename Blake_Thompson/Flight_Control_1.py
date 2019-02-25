@@ -123,7 +123,7 @@ wavelength = float(( 3 * (10 ** 8)) / antenna_frequency)
 
 far_field = float((2 * (antenna_length ** 2)) / wavelength) # Far field calculation for antenna
 
-number_points = ("Number of points (MUST be odd number): ")        # MUST be an odd number, to satisfy 'range' used in GPS_Coords function
+number_points = input("Number of points (MUST be odd number): ")        # MUST be an odd number, to satisfy 'range' used in GPS_Coords function
 while number_points < 2:
     print("Minimum number of 2 points required.")
     number_points =  ("Number of points: ")
@@ -139,9 +139,9 @@ vehicle = connect('/dev/ttyS0',wait_ready = True, baud = 921600)	#Checks to see 
 
 
 
-while not vehicle.is_armable:
-	print "Waiting for vehicle to initialize..."
-	time.sleep(1)
+#while not vehicle.is_armable:
+#	print "Waiting for vehicle to initialize..."
+#	time.sleep(1)
 
 
 
@@ -177,13 +177,16 @@ while vehicle.channels['5'] >= 1200:		#if Flight Mode = 0 or 1 on controller, it
 
 	# A switch on the remote will be used to toggle drone being controlled
 	# by the user or the Raspberry Pi
+    print("Manual flight")
 
-	while vehicle.channels['5'] > 1600:		#if Flight Mode = 0 on controller, it is gathering antenna coordinates
-		lat_ant = vehicle.location.global_frame.lat	#sets antenna latitude
-		long_ant = vehicle.location.global_frame.long	#sets antenna londitude
-		alt_ant = vehicle.location.global_frame.alt	#sets antenna altitude
-		heading = vehicle.heading					#sets compass heading of drone at antenna
-
+    while vehicle.channels['5'] > 1600:		#if Flight Mode = 0 on controller, it is gathering antenna coordinates
+	lat_ant = vehicle.location.global_frame.lat	#sets antenna latitude
+	long_ant = vehicle.location.global_frame.lon	#sets antenna londitude
+	alt_ant = vehicle.location.global_frame.alt	#sets antenna altitude
+	heading = vehicle.heading					#sets compass heading of drone at antenna
+        print("Gathering data")
+        time.sleep(1)
+    time.sleep(1)
 
 if heading > 120 and heading <=240:
 	degree_left = heading - 120 			# heading for far left of pattern (starting facing the antenna)
@@ -234,30 +237,30 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
         break
 
     degree = 120 / (number_points - 1)  # Angle between each point (for path 1), referenced from antenna
-	p1x_1 = far_field * math.sin(60)	#l ines 228-235 are used to find the necessary distance to travel to next point on the first arc
-	p1y_1 = far_field * math.cos(60)
-	p2x_1 = far_field * math.sin(60 - degree)
-	p2y_1 = far_field * math.cos(60 - degree)
-	delta_x_1 = p2x_1 - p1x_1
-	delta_y_1 = p2y_1 - p1y_1
-	distance_change_1 = sqrt(delta_x_1 ** 2 + delta_y_1 ** 2)
+    p1x_1 = far_field * math.sin(60)	#l ines 228-235 are used to find the necessary distance to travel to next point on the first arc
+    p1y_1 = far_field * math.cos(60)
+    p2x_1 = far_field * math.sin(60 - degree)
+    p2y_1 = far_field * math.cos(60 - degree)
+    delta_x_1 = p2x_1 - p1x_1
+    delta_y_1 = p2y_1 - p1y_1
+    distance_change_1 = math.sqrt(delta_x_1 ** 2 + delta_y_1 ** 2)
     time_wait_2 = (distance_change_1 / velocity) + 0.5    # Calculates time before next command is issued so drone can get to next location
     print("Time_wait_2:", time_wait_2)
     print("Time_wait_1:", time_wait_1)
 
 
 
-	for i in range(1,number_points,1):	# Iterates through and travels to specified number of points
+    for i in range(1,number_points,1):	# Iterates through and travels to specified number of points
         if vehicle.channels['5'] >=  1200:
             break
-		current_point = GPS_Coord_List[i]         # Extracts next GPS Location to go to from GPS_Coord_List
-		lat_loop = current_point[0]               # Extracts the latidude of the next coordinate
-		long_loop = current_point[1]              # Extracts the latidude of the next coordinate
+	current_point = GPS_Coord_List[i]         # Extracts next GPS Location to go to from GPS_Coord_List
+	lat_loop = current_point[0]               # Extracts the latidude of the next coordinate
+	long_loop = current_point[1]              # Extracts the latidude of the next coordinate
         alt_loop = current_point[2]               # Extracts the altitude of the next coordinate
 
-		vehicle.simple_goto(LocationGlobal(lat_loop, long_loop, alt_loop),velocity)
+	vehicle.simple_goto(LocationGlobal(lat_loop, long_loop, alt_loop),velocity)
 
-        for t in range(1,ceil(time_wait_2) * 2, 1):     # Continuously checks for operator overrride to return to manual control
+        for t in range(1,int(math.ceil(time_wait_2)) * 2, 1):     # Continuously checks for operator overrride to return to manual control
             if vehicle.channels['5'] >=  1200:
                 break
             time.sleep(0.5)
