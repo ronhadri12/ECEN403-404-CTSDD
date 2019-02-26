@@ -134,22 +134,27 @@ errorFile.close()
 #print(len(theta[0]))
 #print(len(phi[0]))
 
+# ____________________________________________________FILTER__________________________________________________________ #
+# find limits of acceptable frequency range
+sortFreq = sorted(freq)
+lowerLim = sortFreq[int((len(sortFreq)) / 2)] - 0.5
+upperLim = sortFreq[int((len(sortFreq)) / 2)] + 0.5
+
+# filter freq and gain using limits found
+for i in range(len(freq)):
+    if (freq[i] >= lowerLim) & (freq[i] <= upperLim):
+        filtFreq.append(freq[i])
+        filtGain.append(gain[i])
+
+print(len(filtFreq))
+print(len(filtGain))
+
 # __________________________________________________2D PLOTTING_______________________________________________________ #
 plt.figure(1)
 plt.polar(theta, gain, 'o')
 
 plt.figure(2)
 plt.polar(phi, gain, 'o')
-
-sortFreq = sorted(freq)
-lowerLim = sortFreq[int((len(sortFreq)) / 2)] - 0.5
-upperLim = sortFreq[int((len(sortFreq)) / 2)] + 0.5
-for i in range(len(freq)):
-    if (freq[i] >= lowerLim) & (freq[i] <= upperLim):
-        filtFreq.append(freq[i])
-        filtGain.append(gain[i])
-print(len(filtFreq))
-print(len(filtGain))
 
 # plot frequency vs. gain
 plt.figure(3)
