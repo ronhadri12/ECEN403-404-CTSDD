@@ -224,6 +224,10 @@ while not vehicle.mode.name=='GUIDED':              # Checks to make sure vehicl
     vehicle.mode = VehicleMode("GUIDED")
     vehicle.flush()
     time.sleep(1)
+    
+print("Should be in GUIDED mode")
+print(vehicle.mode.name)
+
 
 while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is in autonomous mode
 
