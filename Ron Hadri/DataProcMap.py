@@ -38,8 +38,12 @@ freq = []       # list used to store all frequency values
 
 errorList = []  # list used in percent error calculations
 
+# filtered lists used to plot
 filtFreq = []
 filtGain = []
+filtDist = []
+filtTheta = []
+filtPhi = []
 
 # ______________________________________________________I/O___________________________________________________________ #
 # read the files and store the parameters into corresponding lists
@@ -145,16 +149,19 @@ for i in range(len(freq)):
     if (freq[i] >= lowerLim) & (freq[i] <= upperLim):
         filtFreq.append(freq[i])
         filtGain.append(gain[i])
+        filtDist.append(dist[i])
+        filtTheta.append(theta[i])
+        filtPhi.append(phi[i])
 
 print(len(filtFreq))
 print(len(filtGain))
 
 # __________________________________________________2D PLOTTING_______________________________________________________ #
 plt.figure(1)
-plt.polar(theta, gain, 'o')
+plt.polar(filtTheta, filtGain, 'o')
 
 plt.figure(2)
-plt.polar(phi, gain, 'o')
+plt.polar(filtPhi, filtGain, 'o')
 
 # plot frequency vs. gain
 plt.figure(3)
@@ -167,8 +174,8 @@ plt.show()
 pdb.set_trace()                                             # breakpoint
 
 # __________________________________________________3D PLOTTING_______________________________________________________ #
-THETA, PHI = np.meshgrid(theta[0], phi[0])
-R = gain[0]
+THETA, PHI = np.meshgrid(filtTheta, filtPhi)
+R = filtGain
 X = R * np.sin(PHI) * np.cos(THETA)
 Y = R * np.sin(PHI) * np.sin(THETA)
 Z = R * np.cos(PHI)
