@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d, Axes3D
 import math
-from math import sin, cos, sqrt, atan2, radians
+from math import sin, cos, sqrt, atan2, radians, exp
 import pdb
 
 
@@ -85,6 +85,9 @@ for i in range(file_len(gFile)):
     for j in range(len(DisThetaPhi)):
         DisThetaPhi[j] = float(DisThetaPhi[j])
 
+    if i < 5:
+        DisThetaPhi[2] = 360 - DisThetaPhi[2]
+
     for j in range(len(listFreqNums)):
         listFreqNums[j] = float(listFreqNums[j])
         listGainNums[j] = float(listGainNums[j])
@@ -141,8 +144,8 @@ errorFile.close()
 # ____________________________________________________FILTER__________________________________________________________ #
 # find limits of acceptable frequency range
 sortFreq = sorted(freq)
-lowerLim = sortFreq[int((len(sortFreq)) / 2)] - 0.5
-upperLim = sortFreq[int((len(sortFreq)) / 2)] + 0.5
+lowerLim = sortFreq[int((len(sortFreq)) / 2)] - 0.05
+upperLim = sortFreq[int((len(sortFreq)) / 2)] + 0.05
 
 # filter freq and gain using limits found
 for i in range(len(freq)):
@@ -152,6 +155,10 @@ for i in range(len(freq)):
         filtDist.append(dist[i])
         filtTheta.append(theta[i])
         filtPhi.append(phi[i])
+
+for i in range(len(filtPhi)):
+    filtPhi[i] = radians(filtPhi[i])
+    filtTheta[i] = radians(filtTheta[i])
 
 print(len(filtFreq))
 print(len(filtGain))
@@ -171,14 +178,21 @@ plt.ylabel('Gain (dB)')
 plt.title('Frequency (MHz) vs. Gain (dB)')
 plt.show()
 
-pdb.set_trace()                                             # breakpoint
+#pdb.set_trace()                                             # breakpoint
 
 # __________________________________________________3D PLOTTING_______________________________________________________ #
 THETA, PHI = np.meshgrid(filtTheta, filtPhi)
+
+for i in range(len(filtGain)):                              # change gain from dB to Watts
+    filtGain[i] = exp(filtGain[i]/10)
+
+# convert from spherical to cartesian coordinates
 R = filtGain
 X = R * np.sin(PHI) * np.cos(THETA)
 Y = R * np.sin(PHI) * np.sin(THETA)
 Z = R * np.cos(PHI)
+
+# set parameters to plot
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1, projection='3d')
 plot = ax.plot_surface(
@@ -186,9 +200,10 @@ plot = ax.plot_surface(
     linewidth=0, antialiased=False, alpha=0.5
 )
 
-ax.set_xlabel(r'$\phi_\mathrm{real}$')
-ax.set_ylabel(r'$\phi_\mathrm{im}$')
-ax.set_zlabel(r'$V(\phi)$')
+# Axes labels
+#ax.set_xlabel(r'$\phi_\mathrm{real}$')
+#ax.set_ylabel(r'$\phi_\mathrm{im}$')
+#ax.set_zlabel(r'$V(\phi)$')
 
 plt.show()
 
