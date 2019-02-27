@@ -281,3 +281,4 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
 # Manual Control
 vehicle.mode = VehicleMode("STABILIZE")
 vehicle.flush		# Returns control back to user, in case of malfunction or end of flight path
+print("End of Script")
