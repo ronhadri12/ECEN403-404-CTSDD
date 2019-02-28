@@ -2,10 +2,10 @@
 import math
 
 heading = 322
-far_field = 6.5                             # distance of points from antenna in the far field
+far_field = 6.7                             # distance of points from antenna in the far field
 number_points = 11                          # number of points per path
-height  = [0]                    # number of vertiacl meters BELOW the antenna
-number_paths = 1                            # Number of paths to be run
+height  = [0.91, 0 , -0.91]                    # number of vertiacl meters BELOW the antenna
+number_paths = 3                            # Number of paths to be run
 #gain = [-20, -17,-16,-15,-14,-13,-14,-15,-16,-17,-20,-10,-7,-6,-5,-4,-3,-4,-5,-6,-7,-10,-7,-4,-3,-2,-1,0,-1,-2,-3,-4,-7,-17,-14,-13,-12,-11,-10,-11,-12,-13,-14,-17]
 degree = 120 / (number_points - 1)            # Angle between each point, referenced from antenna (degrees)
 
@@ -30,7 +30,7 @@ def Rons_Stuff(far_field,number_points,height,number_paths,degree):
             phi[i] = 0                                            # determines phi for the point that lies on the normal vector
         elif i > normal_vector_point_number:
             points_from_normal = i - normal_vector_point_number
-            phi[i] = degree * points_from_normal                  # determines phi for the points that are to the right of the path
+            phi[i] = 360 - (degree * points_from_normal)                  # determines phi for the points that are to the right of the path
 
     total_number_points = number_points * number_paths          # calculates total number of points to fly to
 
@@ -42,7 +42,7 @@ def Rons_Stuff(far_field,number_points,height,number_paths,degree):
     for i in range(1,total_number_points+1,1):
         point_info_vector=[0,0,0]                             # resets the point_info_vector to be filled in for loop
 
-        point_info_vector[1] = (theta[ (i-1) / number_points ]) + 90   # second entry is the theta angle(angle from normal vector on horizontal plane)
+        point_info_vector[1] = 90 - (theta[ (i-1) / number_points ])   # second entry is the theta angle(angle from normal vector on horizontal plane)
 
         if ((i-1) / number_points) % 2 == 0:
             point_info_vector[2] = phi[ ((i-1) % number_points) ]       # third entry is the phi angle (angle from vertical axis)
