@@ -21,10 +21,6 @@ def file_len(fname):                                                        # fi
 
 
 # ___________________________________________________VARIABLES________________________________________________________ #
-# specify which data set to analyze as the current one
-dataSet = 3
-BlakeDataSet = 5
-
 # lists used to store radiation pattern parameters
 listDistNums = []
 listThetaNums = []
@@ -33,8 +29,7 @@ dist = []
 theta = []
 phi = []
 gain = []
-
-freq = []       # list used to store all frequency values
+freq = []               # list used to store all frequency values
 
 # lists used to store percent error calculations
 errorList = []
@@ -47,7 +42,8 @@ filtDist = []
 filtTheta = []
 filtPhi = []
 
-posAngle = False
+posAngle = False        # determine whether horizontal angle is pos or neg depending on normal vector of antenna
+freqRange = 0.005       # acceptable maximum and minimum frequency range from median value of frequencies
 
 # ______________________________________________________I/O___________________________________________________________ #
 # read the files and store the parameters into corresponding lists
@@ -115,34 +111,22 @@ for i in range(file_len(gFile)):
             if j == (len(listFreqNums) - 1):
                 avgError.append((sum(errorList) / len(errorList)) * 100)
 
-        # lists of 11 elements with lists of 1024 elements
-        #listDistNums = [DisThetaPhi[0]] * len(listFreqNums)
-        #listThetaNums = [DisThetaPhi[1]] * len(listFreqNums)
-        #listPhiNums = [DisThetaPhi[2]] * len(listFreqNums)
-
-    # lists of 11 elements with lists of 1024 elements continued
-    #gain.append(listGainNums)
-    #freq.append(listFreqNums)
-    #dist.append(listDistNums)
-    #theta.append(listThetaNums)
-    #phi.append(listPhiNums)
+totalAvgError = sum(avgError) / len(avgError)
 
 # ______________________________________DISPLAY OUTPUT PARAMETERS_________________________________________ #
-print("Average error between gain measurements =", avgError)
-errorFile.write(str(avgError))
-print(len(gain))
-print(len(errorList))
-#print("Distance list: ", dist)
-#print("Theta list: ", theta)
-#print("Phi list: ", phi)
-#print("Gain list: ", gain)
-#print("Frequency list: ", freq)
+print("Average error between gain measurements for each point =", avgError)
+print("Total average error of all measurements =", totalAvgError)
+for i in range(len(avgError)):
+    errorFile.write(str(avgError[i]))
+    errorFile.write("\n")
+
+errorFile.write(str(totalAvgError))
 
 # ____________________________________________________FILTER__________________________________________________________ #
 # find limits of acceptable frequency range
 sortFreq = sorted(freq)
-lowerLim = sortFreq[int((len(sortFreq)) / 2)] - 0.004
-upperLim = sortFreq[int((len(sortFreq)) / 2)] + 0.004
+lowerLim = sortFreq[int((len(sortFreq)) / 2)] - freqRange
+upperLim = sortFreq[int((len(sortFreq)) / 2)] + freqRange
 
 # filter freq and gain using limits found
 for i in range(len(freq)):
@@ -175,8 +159,6 @@ plt.ylabel('Gain (dB)')
 plt.title('Frequency (MHz) vs. Gain (dB)')
 plt.show()
 
-#pdb.set_trace()                                             # breakpoint
-
 # __________________________________________________3D PLOTTING_______________________________________________________ #
 THETA, PHI = np.meshgrid(filtTheta, filtPhi)
 
@@ -198,9 +180,7 @@ plot = ax.plot_surface(
 )
 
 # Axes labels
-#ax.set_xlabel(r'$\phi_\mathrm{real}$')
-#ax.set_ylabel(r'$\phi_\mathrm{im}$')
-#ax.set_zlabel(r'$V(\phi)$')
+ax.set_zlabel(r'Power (W)')
 
 plt.show()
 
