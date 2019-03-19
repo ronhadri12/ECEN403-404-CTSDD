@@ -45,12 +45,14 @@ filtPhi = []
 posAngle = False        # determine whether horizontal angle is pos or neg depending on normal vector of antenna
 freqRange = 0.005       # acceptable maximum and minimum frequency range from median value of frequencies
 
+userLocation = "C:\\Users\\ronha\\OneDrive\\Documents\\Texas A&M\\Spring 2019\\ECEN 404-504\\";
+
 # ______________________________________________________I/O___________________________________________________________ #
 # read the files and store the parameters into corresponding lists
 print("\nReading the files now.")
-fFile = "C:\\Users\\ronha\\OneDrive\\Documents\\Texas A&M\\Spring 2019\\ECEN 404-504\\freqdata_022619.txt"
-gFile = "C:\\Users\\ronha\\OneDrive\\Documents\\Texas A&M\\Spring 2019\\ECEN 404-504\\magdata_022619.txt"
-gpsFile = "C:\\Users\\ronha\\OneDrive\\Documents\\Texas A&M\\Spring 2019\\ECEN 404-504\\coorddata_022619.txt"
+fFile = userLocation + "freqdata_022619.txt"
+gFile = userLocation + "magdata_022619.txt"
+gpsFile = userLocation + "coorddata_022619.txt"
 freqFile = open(fFile, "r")
 gainFile = open(gFile, "r")
 dtpFile = open(gpsFile, "r")
