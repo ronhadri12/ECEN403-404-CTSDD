@@ -43,7 +43,7 @@ filtTheta = []
 filtPhi = []
 
 posAngle = False        # determine whether horizontal angle is pos or neg depending on normal vector of antenna
-freqRange = 0.005       # acceptable maximum and minimum frequency range from median value of frequencies
+freqRange = 0.0025       # acceptable maximum and minimum frequency range from median value of frequencies
 
 userLocation = "C:\\Users\\ronha\\OneDrive\\Documents\\Texas A&M\\Spring 2019\\ECEN 404-504\\";
 
@@ -168,8 +168,8 @@ for i in range(len(filtGain)):                              # change gain from d
     filtGain[i] = exp(filtGain[i]/10)
 
 # convert from spherical to cartesian coordinates
-R = filtGain
-X = R * np.sin(PHI) * np.cos(THETA)
+R = filtGain                                                # _________________________NOTE___________________________ #
+X = R * np.sin(PHI) * np.cos(THETA)                         # change THETA w/ PHI & PHI w/ THETA to see what you get!!!
 Y = R * np.sin(PHI) * np.sin(THETA)
 Z = R * np.cos(PHI)
 
@@ -182,7 +182,10 @@ plot = ax.plot_surface(
 )
 
 # Axes labels
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
 ax.set_zlabel(r'Power (W)')
+plt.title('3D Plot')
 
 plt.show()
 
