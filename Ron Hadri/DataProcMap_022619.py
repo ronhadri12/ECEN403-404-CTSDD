@@ -67,7 +67,7 @@ filtGainFreq = []       # store gain values to compare to frequency
 filtGainV = []          # store gain values to create vertical radiation pattern
 
 posAngle = False        # determine whether horizontal angle is pos or neg depending on normal vector of antenna
-freqRange = 0.005       # acceptable maximum and minimum frequency range from median value of frequencies
+freqRange = 0.05       # acceptable maximum and minimum frequency range from median value of frequencies
 interpPointH = 0        # interpolated point at a certain angle for the HRP
 interpPointV = 0        # interpolated point at a certain angle for the VRP
 
@@ -200,18 +200,20 @@ for i in range(len(uniquePhi)):
     tempGainH = []
     tempGainV = []
 
-thetaAngles = np.linspace(min(uniqueTheta), max(uniqueTheta), 112)      # create 112 evenly-spaced angles for the VRP
+for i in range(len(uniqueTheta) - 1):
+    thetaAngles = np.linspace(uniqueTheta[i], uniqueTheta[i + 1], 11)
+    np.thetaAng = thetaAng.extend(thetaAngles)
 
 # create 121 evenly spaced angles for the VRP (Vertical Radiation Pattern)
-for i in range(len(thetaAngles)):
-    if i > 0:                                                           # exclude the first entry to avoid repetition
-        if i < len(thetaAngles) - 1:                                    # exclude the last entry to avoid repetition
-            thetaAng.append(thetaAngles[i])
+# for i in range(len(thetaAngles)):
+#     if i > 0:                                                           # exclude the first entry to avoid repetition
+#         if i < len(thetaAngles) - 1:                                    # exclude the last entry to avoid repetition
+#             thetaAng.append(thetaAngles[i])
+#
+# for i in range(len(uniqueTheta)):
+#     thetaAng.append(uniqueTheta[i])
 
-for i in range(len(uniqueTheta)):
-    thetaAng.append(uniqueTheta[i])
-
-thetaAng.sort()
+#thetaAng.sort()
 print(thetaAng)
 print(len(thetaAng))
 
@@ -265,11 +267,11 @@ for i in range(len(maxGainV)):
             else:
                 if maxGainV[i] > maxGainV[i - 1]:
                     interpPointV = (interpPointV + maxGainV[i]) / 2
-                    filtTheta.append(thetaAng[thetaAng.index(uniqueTheta[i - 1]) + (j - 1)])
+                    filtTheta.append(thetaAng[thetaAng.index(uniqueTheta[i - 1]) + (j + 1)])
                     filtGain.append(interpPointV)
                 else:
                     interpPointV = (interpPointV + maxGainV[i - 1]) / 2
-                    filtTheta.append(thetaAng[thetaAng.index(uniqueTheta[i]) - (j - 1)])
+                    filtTheta.append(thetaAng[thetaAng.index(uniqueTheta[i]) - (j + 1)])
                     filtGain.append(interpPointV)
 
 print("maxGainH =", maxGainH)
