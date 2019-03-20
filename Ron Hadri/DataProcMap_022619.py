@@ -4,6 +4,7 @@ from mpl_toolkits.mplot3d import axes3d, Axes3D
 import math
 from math import sin, cos, sqrt, atan2, radians, exp
 import pdb
+from scipy.interpolate import splprep, splev
 
 
 #######################################################################################################################
@@ -18,6 +19,19 @@ def file_len(fname):                                                        # fi
         for i, l in enumerate(f):
             pass
     return i + 1
+
+
+def unique(list1):                                                          # get unique values in a list
+    # initialize a null list
+    unique_list = []
+
+    # traverse for all elements
+    for x in list1:
+        # check if exists in unique_list or not
+        if x not in unique_list:
+            unique_list.append(x)
+
+    return unique_list
 
 
 # ___________________________________________________VARIABLES________________________________________________________ #
@@ -42,8 +56,18 @@ filtDist = []
 filtTheta = []
 filtPhi = []
 
+# store maximum gain values in radiation pattern
+maxGainH = []
+maxGainV = []
+tempGainH = []
+tempGainV = []
+
+# store gain values to compare to frequency
+filtGainFreq = []
+
 posAngle = False        # determine whether horizontal angle is pos or neg depending on normal vector of antenna
-freqRange = 0.0025       # acceptable maximum and minimum frequency range from median value of frequencies
+freqRange = 0.005       # acceptable maximum and minimum frequency range from median value of frequencies
+interpPoint = 0         # interpolated point at a certain angle
 
 userLocation = "C:\\Users\\ronha\\OneDrive\\Documents\\Texas A&M\\Spring 2019\\ECEN 404-504\\";
 
@@ -139,23 +163,89 @@ for i in range(len(freq)):
         filtTheta.append(theta[i])
         filtPhi.append(phi[i])
 
-for i in range(len(filtPhi)):
-    filtPhi[i] = radians(filtPhi[i])
-    filtTheta[i] = radians(filtTheta[i])
+print("uniquePhi =", unique(filtPhi))
+print("filtPhi =", filtPhi)
+x = unique(filtTheta)
+x.sort(reverse=True)
+print("uniqueTheta =", x)
+print("filtTheta =", filtTheta)
 
-print(len(filtFreq))
-print(len(filtGain))
+# _________________________________________________INTERPOLATION______________________________________________________ #
+# duplicate the filtGain array
+for i in range(len(filtGain)):
+    filtGainFreq.append(filtGain[i])
+
+# obtain the unique phi and theta angles
+uniquePhi = unique(filtPhi)
+uniqueTheta = unique(filtTheta)
+
+uniqueTheta.sort(reverse=True)                              # organize angles from greatest to least (left to right)
+
+# make list of gain measurements of the unique angles
+for i in range(len(uniquePhi)):
+    for j in range(len(filtPhi)):
+        if filtPhi[j] == uniquePhi[i]:
+            tempGainH.append(filtGain[j])
+        if filtTheta[j] == uniqueTheta[i]:
+            tempGainV.append(filtGain[j])
+
+    # find the maximum gain for each unique angle in both horizontal and vertical radiation pattern
+    maxGainH.append(max(tempGainH))
+    maxGainV.append(max(tempGainV))
+
+    # reset lists of gain measurements of the unique angles
+    tempGainH = []
+    tempGainV = []
+
+x = len(filtPhi)
+
+# interpolation
+for i in range(len(maxGainH)):
+    if i > 0:
+        interpPoint = 0
+        for j in range(len(maxGainH)):
+            if interpPoint == 0:
+                interpPoint = (maxGainH[i - 1] + maxGainH[i]) / 2
+                if maxGainH[i] > maxGainH[i - 1]:
+                    filtPhi.append(uniquePhi[i - 1] + 1)
+                    filtGain.append(interpPoint)
+                else:
+                    filtPhi.append(uniquePhi[i] - 1)
+                    filtGain.append(interpPoint)
+            else:
+                if maxGainH[i] > maxGainH[i-1]:
+                    interpPoint = (interpPoint + maxGainH[i]) / 2
+                    filtPhi.append(uniquePhi[i - 1] + (j + 1))
+                    filtGain.append(interpPoint)
+                else:
+                    interpPoint = (interpPoint + maxGainH[i - 1]) / 2
+                    filtPhi.append(uniquePhi[i] - (j + 1))
+                    filtGain.append(interpPoint)
+
+print("maxGainH =", maxGainH)
+print(len(filtPhi[x:len(filtPhi)]))
+print(filtPhi[x:len(filtPhi)])
+print(filtGain[x:len(filtGain)])
+print("final filtPhi =", filtPhi)
+print(filtGain)
 
 # __________________________________________________2D PLOTTING_______________________________________________________ #
-plt.figure(1)
-plt.polar(filtTheta, filtGain, 'o')
+# convert from degrees to radians to plot
+for i in range(len(filtPhi)):
+    filtPhi[i] = radians(filtPhi[i])
+    #filtTheta[i] = radians(filtTheta[i])
 
-plt.figure(2)
+#plt.figure(1)
+#plt.polar(filtTheta, filtGain, 'o')
+
+plt.figure(1)
 plt.polar(filtPhi, filtGain, 'o')
 
+print("filtGainFreq length =", len(filtGainFreq))
+print("filtFreq length =", len(filtFreq))
 # plot frequency vs. gain
-plt.figure(3)
-plt.plot(filtFreq, filtGain, 'o')
+plt.figure(2)
+plt.plot(filtFreq, filtGainFreq, 'o')
 plt.xlabel('Frequency (MHz)')
 plt.ylabel('Gain (dB)')
 plt.title('Frequency (MHz) vs. Gain (dB)')
