@@ -58,7 +58,8 @@ def Next_Point(distance, angle, lat1, long1, altitude):
 
     return [lat3,long3,altitude]
 ######################################################################################################
-def Heading_to_unit_circle(heading_degree):         # Converts compass heading to comparable unit circle degree, since the Next_point function uses an input of unit circle degrees
+# Converts compass heading to comparable unit circle degree, since the Next_point function uses an input of unit circle degrees
+def Heading_to_unit_circle(heading_degree):
                                                     # Compass heading increases with rotation in the clockwise direction
                                                     # Unit circle angle increases with rotation in counter-clockwise direction
 
@@ -192,7 +193,7 @@ vehicle.flush()
 print("Stabilize")
 
 ############################################################################################
-# Manual Flight
+# Manual flight and calculate GPS coordinates for flight path
 
 while vehicle.channels['5'] >= 1200:		#if Flight Mode = 0 or 1 on controller, it is in manual flight
 
