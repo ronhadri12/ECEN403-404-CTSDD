@@ -17,7 +17,7 @@ from mpl_toolkits.mplot3d import Axes3D
 ##import theoretical
 #theoretical = open('theoretical.txt','r')
 #measured = open('measured.txt','r')
-def maindef():
+def maindef(mesG, mesT, mesP):
     pi = np.pi
     N = 4
     c = 3e8
@@ -32,9 +32,9 @@ def maindef():
     alpha = 0
 
 
-    theta = np.linspace(0,pi,120)
+    theta = np.linspace(0,pi,121)
     #phi = np.linspace(pi*(1/3),pi*(2/3),120)
-    phi = np.linspace(0,pi,120)
+    phi = np.linspace(0,pi,121)
 
     #determine phase shift from angle
     def antennaphase(angle):
@@ -195,10 +195,17 @@ def maindef():
     tester = abs(antfunc(B, d*1.5, theta,90, N))
     #tester = 20*np.log10(tester)
     mag = tester*horfunction(phi)
-    ex = mag*np.sin(phi)*np.cos(theta)
-    ey = mag*np.sin(phi)*np.sin(theta)
-    ez = mag*np.cos(phi)
-    theoplot.plot_surface(ex,ez,ey,rstride=1,cstride=1,cmap=plt.get_cmap('jet'),linewidth=1, antialiased=False, alpha=0.5)
-
+    tx = mag*np.sin(phi)*np.cos(theta)
+    ty = mag*np.sin(phi)*np.sin(theta)
+    tz = mag*np.cos(phi)
+    #THETA, PHI = np.meshgrid(mesT, mesP)
+    #mmag = mesG                                                # _________________________NOTE___________________________ #
+    #mx = mmag * np.sin(phi) * np.cos(theta)                         # change THETA w/ PHI & PHI w/ THETA to see what you get!!!
+    #my = mmag * np.sin(phi) * np.sin(theta)
+    #mz = mmag * np.cos(phi)
+    theoplot.plot_surface(tx,tz,ty,rstride=1,cstride=1,cmap=plt.get_cmap('jet'),linewidth=1, antialiased=False, alpha=0.5)
+    #fig2 = plt.figure()
+    #theoplot2 = fig2.add_subplot(111,projection='3d')
+    #theoplot2.plot_surface(mx,mz,my ,rstride=1,cstride=1,cmap=plt.get_cmap('jet'),linewidth=1, antialiased=False, alpha=0.5)
     plt.show()
     return 0
