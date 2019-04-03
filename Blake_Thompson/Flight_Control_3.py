@@ -263,7 +263,7 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
     if vehicle.channels['5'] >=  1200:
         break
 
-	vehicle.simple_goto(LocationGlobal(lat1, long1, alt1), velocity)	# Commands the drone to go the the desired location at 0.5 m/s
+	vehicle.simple_goto(LocationGlobal(lat1, long1, alt1), groundspeed=1)	# Commands the drone to go the the desired location at 0.5 m/s
 
     for t in range(1,int(math.ceil(time_wait_1)) * 2, 1):     # Continuously checks for operator overrride to return to manual control while allowing time to fly to next point
         if vehicle.channels['5'] >=  1200:
@@ -290,12 +290,13 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
     for i in range(1,number_points,1):	# Iterates through and travels to specified number of points
         if vehicle.channels['5'] >=  1200:
             break
-	    current_point = GPS_Coord_List[i]         # Extracts next GPS Location to go to from GPS_Coord_List
-	    lat_loop = current_point[0]               # Extracts the latidude of the next coordinate
+	current_point = GPS_Coord_List[i]         # Extracts next GPS Location to go to from GPS_Coord_List
+	lat_loop = current_point[0]               # Extracts the latidude of the next coordinate
         long_loop = current_point[1]              # Extracts the latidude of the next coordinate
         alt_loop = current_point[2]               # Extracts the altitude of the next coordinate
 
-        vehicle.simple_goto(LocationGlobal(lat_loop, long_loop, alt_loop),velocity)
+        vehicle.simple_goto(LocationGlobal(lat_loop, long_loop, alt_loop),groundspeed=1)
+        #vehicle.flush()
 
         for t in range(1,int(math.ceil(time_wait_2)) * 2, 1):     # Continuously checks for operator overrride to return to manual control while giving time to go to next point
             if vehicle.channels['5'] >=  1200:
