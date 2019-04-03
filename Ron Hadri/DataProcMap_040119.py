@@ -65,7 +65,7 @@ filtGainFreq = []       # store gain values to compare to frequency
 filtGainV = []          # store gain values to create vertical radiation pattern
 
 posAngle = False        # determine whether horizontal angle is pos or neg depending on normal vector of antenna
-freqRange = 0.001       # acceptable maximum and minimum frequency range from median value of frequencies
+freqRange = 5       # acceptable maximum and minimum frequency range from median value of frequencies
 interpPointH = 0        # interpolated point at a certain angle for the HRP
 interpPointV = 0        # interpolated point at a certain angle for the VRP
 
@@ -74,9 +74,9 @@ userLocation = "C:\\Users\\ronha\\OneDrive\\Documents\\Texas A&M\\Spring 2019\\E
 # ______________________________________________________I/O___________________________________________________________ #
 # read the files and store the parameters into corresponding lists
 print("\nReading the files now.")
-fFile = userLocation + "freqData_040119.txt"
-gFile = userLocation + "magData_040119.txt"
-gpsFile = userLocation + "coordData_040119.txt"
+fFile = userLocation + "freqdata_022619.txt"
+gFile = userLocation + "magdata_022619.txt"
+gpsFile = userLocation + "coorddata_022619.txt"
 freqFile = open(fFile, "r")
 gainFile = open(gFile, "r")
 dtpFile = open(gpsFile, "r")
@@ -273,14 +273,8 @@ for i in range(len(maxGainV)):
                     GainV.append(interpPointV)
                     Theta.append(thetaAng[thetaAng.index(uniqueTheta[i]) - (j + 1)])
 
-print(len(maxGainH))
-print(len(maxGainV))
-print(uniquePhi)
-print(len(uniqueTheta))
 GainH = maxGainH + GainH
 GainV = maxGainV + GainV
-print(len(GainH))
-print(len(GainV))
 
 # __________________________________________________2D PLOTTING_______________________________________________________ #
 # convert from degrees to radians to plot
@@ -296,10 +290,16 @@ plt.figure(1)
 plt.polar(uniquePhi, GainH, 'o')
 
 plt.figure(2)
+plt.polar(filtPhi, filtGain, 'o')
+
+plt.figure(3)
 plt.polar(uniqueTheta, GainV, 'o')
 
+plt.figure(4)
+plt.polar(filtTheta, filtGain, 'o')
+
 # plot frequency vs. gain
-plt.figure(3)
+plt.figure(5)
 plt.plot(filtFreq, filtGainFreq, 'o')
 plt.xlabel('Frequency (MHz)')
 plt.ylabel('Gain (dB)')
@@ -308,7 +308,7 @@ plt.show()
 
 # __________________________________________________3D PLOTTING_______________________________________________________ #
 THETA, PHI = np.meshgrid(uniqueTheta, uniquePhi)
-GAINH, GAINV = np.meshgrid(uniqueTheta, uniquePhi)
+GAINH, GAINV = np.meshgrid(GainH, GainV)
 
 for i in range(len(filtGain)):                              # change gain from dB to Watts
     filtGain[i] = exp(filtGain[i]/10)
