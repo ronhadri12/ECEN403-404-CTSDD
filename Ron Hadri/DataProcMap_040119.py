@@ -65,7 +65,7 @@ filtGainFreq = []       # store gain values to compare to frequency
 filtGainV = []          # store gain values to create vertical radiation pattern
 
 posAngle = False        # determine whether horizontal angle is pos or neg depending on normal vector of antenna
-freqRange = 5       # acceptable maximum and minimum frequency range from median value of frequencies
+freqRange = 0.15       # acceptable maximum and minimum frequency range from median value of frequencies
 interpPointH = 0        # interpolated point at a certain angle for the HRP
 interpPointV = 0        # interpolated point at a certain angle for the VRP
 
@@ -74,9 +74,9 @@ userLocation = "C:\\Users\\ronha\\OneDrive\\Documents\\Texas A&M\\Spring 2019\\E
 # ______________________________________________________I/O___________________________________________________________ #
 # read the files and store the parameters into corresponding lists
 print("\nReading the files now.")
-fFile = userLocation + "freqdata_022619.txt"
-gFile = userLocation + "magdata_022619.txt"
-gpsFile = userLocation + "coorddata_022619.txt"
+fFile = userLocation + "freqData_040119.txt"
+gFile = userLocation + "magData_040119.txt"
+gpsFile = userLocation + "coordData_040119.txt"
 freqFile = open(fFile, "r")
 gainFile = open(gFile, "r")
 dtpFile = open(gpsFile, "r")
@@ -174,11 +174,6 @@ uniquePhi = unique(filtPhi)
 uniqueTheta = unique(filtTheta)
 
 uniqueTheta.sort(reverse=True)                              # organize angles from greatest to least (left to right)
-
-print("initial uniquePhi = ", uniquePhi)
-print(len(uniquePhi))
-print("initial uniqueTheta = ", uniqueTheta)
-print(len(uniqueTheta))
 
 # make list of gain measurements of the unique angles
 for i in range(len(uniquePhi)):
@@ -306,15 +301,29 @@ plt.ylabel('Gain (dB)')
 plt.title('Frequency (MHz) vs. Gain (dB)')
 plt.show()
 
+Gain = GainH + GainV
+uniquePhi = uniquePhi + ([0] * 121)
+uniqueTheta = ([math.pi / 2] * 121) + uniqueTheta
+
+print(uniqueTheta)
+
+for i in range(len(GainH)):                              # change gain from dB to Watts
+    GainH[i] = exp(GainH[i] / 10)
+    GainV[i] = exp(GainV[i] / 10)
+
 # __________________________________________________3D PLOTTING_______________________________________________________ #
 THETA, PHI = np.meshgrid(uniqueTheta, uniquePhi)
 GAINH, GAINV = np.meshgrid(GainH, GainV)
 
-for i in range(len(filtGain)):                              # change gain from dB to Watts
-    filtGain[i] = exp(filtGain[i]/10)
+print("Gain max in dB =", max(Gain))
+
+for i in range(len(Gain)):                              # change gain from dB to Watts
+    Gain[i] = exp(Gain[i] / 10)
+
+print("Gain max in Watts =", max(Gain))
 
 # convert from spherical to cartesian coordinates
-R = GAINH * GAINV
+R = Gain
 X = R * np.sin(PHI) * np.cos(THETA)
 Y = R * np.sin(PHI) * np.sin(THETA)
 Z = R * np.cos(PHI)
