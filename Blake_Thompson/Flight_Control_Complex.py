@@ -233,9 +233,9 @@ while vehicle.channels['5'] >= 1200:		#if Flight Mode = 0 or 1 on controller, it
         print("Gathering data")
         time.sleep(1)
     time.sleep(1)
-    alt_list = [0] * number_paths                       # Creates list of altitudes for each flight path
-    for i in range(0,len(alt_list),1):               # Drops each consecutive flight path by 1 meter from start altitude of the antenna altitude
-        alt_list[i] = alt_ant - (i * 1)
+alt_list = [0] * number_paths                       # Creates list of altitudes for each flight path
+for i in range(0,len(alt_list),1):               # Drops each consecutive flight path by 1 meter from start altitude of the antenna altitude
+    alt_list[i] = alt_ant - (i * 1)
 
 print(lat_ant)
 print(long_ant)
