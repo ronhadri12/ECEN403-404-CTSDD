@@ -76,7 +76,7 @@ def Heading_to_unit_circle(heading_degree):
 #####################################################################################################################
 # Function used to calculate GPS coordinates for drone to fly to
 
-def GPS_Coords(far_field, heading, lat_ant, long_ant, alt_ant, points_per_path, number_paths):
+def GPS_Coords(far_field, heading, lat_ant, long_ant, alt_list, points_per_path, number_paths):
     total_points = points_per_path * number_paths
 
 
@@ -101,8 +101,8 @@ def GPS_Coords(far_field, heading, lat_ant, long_ant, alt_ant, points_per_path, 
 
     z = 0								            # Variable for incrementing in teh following for loop
     point_list_arc1 = [0] * total_points			# Creates a list with number of entries equal to the number of desired points for the drone to travel to
-    print(new_degree_left)
-    print(new_degree_right)
+    #print(new_degree_left)
+    #print(new_degree_right)
 
     for z in range(0,total_points,1):                               # A for loop that goes through each point to assign a GPS location to it
         if ((z/points_per_path) % 2) == 0:                          # Checks for even number paths (path starts on left)
@@ -112,7 +112,7 @@ def GPS_Coords(far_field, heading, lat_ant, long_ant, alt_ant, points_per_path, 
             else:
                 next_angle = i
 
-            print(next_angle)
+            #print(next_angle)
             point_list_arc1[z] = Next_Point(far_field, next_angle, lat_ant, long_ant,alt_list[z / points_per_path])     # Fills in list with desired number of GPS coordinates
 
 
@@ -122,7 +122,7 @@ def GPS_Coords(far_field, heading, lat_ant, long_ant, alt_ant, points_per_path, 
                 next_angle = (360 + i)
             else:
                 next_angle = i
-            print(next_angle)
+            #print(next_angle)
 
 
             point_list_arc1[z] = Next_Point(far_field, next_angle, lat_ant, long_ant,alt_list[z / points_per_path])     # Fills in list with desired number of GPS coordinates
@@ -169,14 +169,14 @@ while ((points_per_path < 2) | (points_per_path % 2 == 0)):                     
     points_per_path =  input("Number of points? (MUST be odd number of 3 or more): ")
 points_per_path = int(points_per_path)
 
-number_paths = raw_input("Number of paths? (Must be positive integer)")
+number_paths = raw_input("Number of paths? (Must be positive integer): ")
 while not (number_paths.isdigit()):                                #checks that input is an integer
     print("Input is not a positive integer")
     print(" ")
     number_paths = raw_input("Number of points? (MUST be odd number of 3 or more): ")
 
 number_paths = int(number_paths)
-
+total_points = points_per_path * number_paths
 ########################################################################################################
 # Connect to the vehicle, perform checks, and give control of drone to user
 print("Connecting to a vehicle on: /dev/ttyS0")
@@ -235,7 +235,7 @@ while vehicle.channels['5'] >= 1200:		#if Flight Mode = 0 or 1 on controller, it
     time.sleep(1)
 alt_list = [0] * number_paths                       # Creates list of altitudes for each flight path
 for i in range(0,len(alt_list),1):               # Drops each consecutive flight path by 1 meter from start altitude of the antenna altitude
-    alt_list[i] = alt_ant - (i * 1)
+    alt_list[i] = alt_ant - (i * 2) 
 
 print(lat_ant)
 print(long_ant)
@@ -265,10 +265,10 @@ print("Got Coordinates")
 
 velocity = float(1)							# Determines how fast the drone will fly
 time_wait_1 = (far_field / velocity) + 0.5		# Calculates time (seconds) before next command is issued so drone can get to next location
-point_1 = GPS_Coord_List[0]                     # Extractst the first point from the list of GPS coordinates
-lat1 = point_1[0]                               # Extracts the latidude of the first coordinate
-long1 = point_1[1]                              # Extracts the latidude of the first coordinate
-alt1 = point_1[2]                               # Extracts the altitude of the first coordinate
+#point_1 = GPS_Coord_List[0]                     # Extractst the first point from the list of GPS coordinates
+#lat1 = point_1[0]                               # Extracts the latidude of the first coordinate
+#long1 = point_1[1]                              # Extracts the latidude of the first coordinate
+#alt1 = point_1[2]                               # Extracts the altitude of the first coordinate
 ################################################################################################
 # Autonomous Flight
 
@@ -290,7 +290,7 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
     if vehicle.channels['5'] >=  1200:
         break
 
-	vehicle.simple_goto(LocationGlobal(lat1, long1, alt1), velocity)	# Commands the drone to go the the desired location at 0.5 m/s
+	#vehicle.simple_goto(LocationGlobal(lat1, long1, alt1), groundspeed = 1)	# Commands the drone to go the the desired location at 0.5 m/s
 
     for t in range(1,int(math.ceil(time_wait_1)) * 2, 1):     # Continuously checks for operator overrride to return to manual control while allowing time to fly to next point
         if vehicle.channels['5'] >=  1200:
@@ -314,15 +314,21 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
 
 
 
-    for i in range(1,points_per_path,1):	# Iterates through and travels to specified number of points
+    for i in range(0,total_points,1):	# Iterates through and travels to specified number of points
         if vehicle.channels['5'] >=  1200:
             break
-	    current_point = GPS_Coord_List[i]         # Extracts next GPS Location to go to from GPS_Coord_List
-	    lat_loop = current_point[0]               # Extracts the latidude of the next coordinate
+	current_point = GPS_Coord_List[i]         # Extracts next GPS Location to go to from GPS_Coord_List
+	lat_loop = current_point[0]               # Extracts the latidude of the next coordinate
         long_loop = current_point[1]              # Extracts the latidude of the next coordinate
-        alt_loop = current_point[2]               # Extracts the altitude of the next coordinate
+        alt_loop = int(math.ceil(current_point[2]))               # Extracts the altitude of the next coordinate
+        
 
-        vehicle.simple_goto(LocationGlobal(lat_loop, long_loop, alt_loop),velocity)
+        vehicle.simple_goto(LocationGlobal(lat_loop, long_loop, alt_loop),groundspeed = 1)
+        print("Traveling to point: ", i)
+        print("Lat: ",lat_loop)
+        print("Lon: ", long_loop)
+        print("Alt: ",  alt_loop)
+        print(vehicle.location.global_frame.alt)
 
         for t in range(1,int(math.ceil(time_wait_2)) * 2, 1):     # Continuously checks for operator overrride to return to manual control while giving time to go to next point
             if vehicle.channels['5'] >=  1200:
