@@ -6,9 +6,84 @@
 
 
 # Import Dronekit-Python
-from dronekit import connect, VehicleMode, time, LocationGlobal
+from dronekit import connect, VehicleMode, time, LocationGlobal, LocationGlobalRelative
+from pymavlink import mavutil
+import time
 import math
 import scipy.integrate as integrate
+####################################################################################3
+# Set attitude definition
+
+def send_attitude_target(roll_angle = 0.0, pitch_angle = 0.0,
+                         yaw_angle = None, yaw_rate = 0.0, use_yaw_rate = False,
+                         thrust = 0.5):
+    """
+    use_yaw_rate: the yaw can be controlled using yaw_angle OR yaw_rate.
+                  When one is used, the other is ignored by Ardupilot.
+    thrust: 0 <= thrust <= 1, as a fraction of maximum vertical thrust.
+            Note that as of Copter 3.5, thrust = 0.5 triggers a special case in
+            the code for maintaining current altitude.
+    """
+    if yaw_angle is None:
+        # this value may be unused by the vehicle, depending on use_yaw_rate
+        yaw_angle = vehicle.attitude.yaw
+    # Thrust >  0.5: Ascend
+    # Thrust == 0.5: Hold the altitude
+    # Thrust <  0.5: Descend
+    msg = vehicle.message_factory.set_attitude_target_encode(
+        0, # time_boot_ms
+        1, # Target system
+        1, # Target component
+        0b00000000 if use_yaw_rate else 0b00000100,
+        to_quaternion(roll_angle, pitch_angle, yaw_angle), # Quaternion
+        0, # Body roll rate in radian
+        0, # Body pitch rate in radian
+        math.radians(yaw_rate), # Body yaw rate in radian/second
+        thrust  # Thrust
+    )
+    vehicle.send_mavlink(msg)
+
+def set_attitude(roll_angle = 0.0, pitch_angle = 0.0,
+                 yaw_angle = None, yaw_rate = 0.0, use_yaw_rate = False,
+                 thrust = 0.5, duration = 0):
+    """
+    Note that from AC3.3 the message should be re-sent more often than every
+    second, as an ATTITUDE_TARGET order has a timeout of 1s.
+    In AC3.2.1 and earlier the specified attitude persists until it is canceled.
+    The code below should work on either version.
+    Sending the message multiple times is the recommended way.
+    """
+    send_attitude_target(roll_angle, pitch_angle,
+                         yaw_angle, yaw_rate, False,
+                         thrust)
+    start = time.time()
+    while time.time() - start < duration:
+        send_attitude_target(roll_angle, pitch_angle,
+                             yaw_angle, yaw_rate, False,
+                             thrust)
+        time.sleep(0.1)
+    # Reset attitude, or it will persist for 1s more due to the timeout
+    send_attitude_target(0, 0,
+                         0, 0, True,
+                         thrust)
+
+def to_quaternion(roll = 0.0, pitch = 0.0, yaw = 0.0):
+    """
+    Convert degrees to quaternions
+    """
+    t0 = math.cos(math.radians(yaw * 0.5))
+    t1 = math.sin(math.radians(yaw * 0.5))
+    t2 = math.cos(math.radians(roll * 0.5))
+    t3 = math.sin(math.radians(roll * 0.5))
+    t4 = math.cos(math.radians(pitch * 0.5))
+    t5 = math.sin(math.radians(pitch * 0.5))
+
+    w = t0 * t2 * t4 + t1 * t3 * t5
+    x = t0 * t3 * t4 - t1 * t2 * t5
+    y = t0 * t2 * t5 + t1 * t3 * t4
+    z = t1 * t2 * t4 - t0 * t3 * t5
+
+    return [w, x, y, z]
 
 
 ##############################################################################
@@ -292,10 +367,10 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
 
 	#vehicle.simple_goto(LocationGlobal(lat1, long1, alt1), groundspeed = 1)	# Commands the drone to go the the desired location at 0.5 m/s
 
-    for t in range(1,int(math.ceil(time_wait_1)) * 2, 1):     # Continuously checks for operator overrride to return to manual control while allowing time to fly to next point
-        if vehicle.channels['5'] >=  1200:
-            break
-        time.sleep(0.5)
+    #for t in range(1,int(math.ceil(time_wait_1)) * 2, 1):     # Continuously checks for operator overrride to return to manual control while allowing time to fly to next point
+        #if vehicle.channels['5'] >=  1200:
+         #   break
+       # time.sleep(0.5)
 
     if vehicle.channels['5'] >=  1200:
         break
@@ -320,22 +395,38 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
 	current_point = GPS_Coord_List[i]         # Extracts next GPS Location to go to from GPS_Coord_List
 	lat_loop = current_point[0]               # Extracts the latidude of the next coordinate
         long_loop = current_point[1]              # Extracts the latidude of the next coordinate
-        alt_loop = int(math.ceil(current_point[2]))               # Extracts the altitude of the next coordinate
+        alt_loop = current_point[2]               # Extracts the altitude of the next coordinate
         
-
+       
         vehicle.simple_goto(LocationGlobal(lat_loop, long_loop, alt_loop),groundspeed = 1)
-        print("Traveling to point: ", i)
-        print("Lat: ",lat_loop)
-        print("Lon: ", long_loop)
-        print("Alt: ",  alt_loop)
-        print(vehicle.location.global_frame.alt)
+        vehicle.flush()
+        
+        for t in range(1,int(math.ceil(time_wait_2)) * 2, 1):     # Continuously checks for operator overrride to return to manual control while giving time to go to next point
+            if vehicle.channels['5'] >=  1200:
+                break
+            time.sleep(0.5)
+        
+        print("Traveling to point: ", (i + 1))
+        print("Target Alt.: ",  alt_loop)
+        print("Current Alt.: ",vehicle.location.global_frame.alt)
+        
+        while ((vehicle.location.global_frame.alt) > (alt_loop * 1.003)):
+            set_attitude(thrust = 0.4)
+            if vehicle.channels['5'] >=  1200:
+                break
+            time.sleep(0.5)
+        
+        if ((vehicle.location.global_frame.alt) <= (alt_loop * 1.003)):
+            set_attitude(thrust = 0.5)
 
         for t in range(1,int(math.ceil(time_wait_2)) * 2, 1):     # Continuously checks for operator overrride to return to manual control while giving time to go to next point
             if vehicle.channels['5'] >=  1200:
                 break
             time.sleep(0.5)
 
-
+        print("At point: ", (i + 1))
+        print("Target Alt.: ",  alt_loop)
+        print("Current Alt.: ",vehicle.location.global_frame.alt)
 
     for t in range(1,1000, 1):                      # Drone waits for operator to take control once it has completed the path
         if vehicle.channels['5'] >=  1200:
