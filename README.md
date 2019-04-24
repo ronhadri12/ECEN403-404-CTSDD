@@ -1,2 +1,5 @@
 # Senior Design - CTSDD
-To run CTSDD, follow these steps:
+  # Getting Started
+    # Prerequisites
+      Install IDE to run python 3.0
+      
