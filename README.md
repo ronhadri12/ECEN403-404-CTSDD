@@ -4,7 +4,7 @@
     DESCRIPTION
     
   # Breakdown of Sub-Systems
-  The following is a list describing the sub-systems that we divided amongst our team members to efficiently complete this project
+    The following is a list describing the sub-systems that we divided amongst our team members to efficiently complete this project
     Autonomous Flight - Blake Thompson:
       DESCRIPTION
     Data Transfer Management - Josh Suen:
