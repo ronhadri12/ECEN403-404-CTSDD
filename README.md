@@ -21,7 +21,6 @@
       Collaborated with the Data Processing and Mapping Subsystem to determine an appropriate save format
       Automated data collection
       Created rudimentary user interface with error catching
-
       
     Data Processing & Mapping - Ron Hadri:
       Parses magnitude and coordinate data
@@ -46,3 +45,20 @@
       4) Go to ECEN403-404-CTSDD > Josh Suen and open up the corresponding magData_mmddyy and freqData_mmddyy files
       5) Save the corresponding magData_mmddyy and freqData_mmddyy files to your computer
       
+    Processing the Data
+      1) Go to ECEN403-404-CTSDD > Ron Hadri > DataProcMap and save it to your computer
+      2) Open DataProcMap usig the IDE you have installed for python
+      3) Under the "I/O" category in the DataProcMap code, ensure that the correct files are being read
+      4) Under the "Variables" category in the DataProcMap code, ensure that the freqRange is below 1.5 to filter out undesired
+         frequencies
+      5) Run the program to view the Average Perect Error of the system, Frequency vs Gain plot, and the radiation plots of the data
+      
+    Using the Diagnostic Database
+      1) Go to ECEN403-404-CTSDD > Gerardo Montemayor > Database and save it to your computer
+      2) Open Database usig the IDE you have installed for python
+      3) Under the "I/O" category in the DataProcMap code, ensure that the correct files are being read
+      4) Under the "Variables" category in the DataProcMap code, ensure that the freqRange is below 1.5 to filter out undesired
+         frequencies
+      5) Run the program and select your desired options via the GUI that is displayed to view the Average Perect Error of the system,
+         Frequency vs Gain plot, the radiation plots of the data, the 3D theoretical radiation plot, side lobe tracking, and the percent
+         error plot between the measured and theoretical data
