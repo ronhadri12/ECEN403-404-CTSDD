@@ -1,7 +1,7 @@
 # Cell Tower Signal Diagnostic Drone (CTSDD) - Senior Design
 
   # Getting Started
-    # Prerequisites
+    Prerequisites
       Install IDE to run python 3.0
       
   # Breakdown of Sub-Systems
