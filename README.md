@@ -42,22 +42,22 @@
       1) Install an IDE to run python 3.0
       2) Go to ECEN403-404-CTSDD > Blake_Thompson and open up the most recent coordData_mmddyy file
       3) Save the most recent coordData_mmddyy file to your computer
-      4) Go to ECEN403-404-CTSDD > Josh Suen and open up the corresponding magData_mmddyy and freqData_mmddyy files
+      4) Go to ECEN403-404-CTSDD > JoshuaSuen and open up the corresponding magData_mmddyy and freqData_mmddyy files
       5) Save the corresponding magData_mmddyy and freqData_mmddyy files to your computer
       
     Processing the Data
-      1) Go to ECEN403-404-CTSDD > Ron Hadri > DataProcMap and save it to your computer
+      1) Go to ECEN403-404-CTSDD > Ron Hadri > DataProcMap.py and save it to your computer
       2) Open DataProcMap usig the IDE you have installed for python
-      3) Under the "I/O" category in the DataProcMap code, ensure that the correct files are being read
-      4) Under the "Variables" category in the DataProcMap code, ensure that the freqRange is below 1.5 to filter out undesired
+      3) Under the "I/O" category in the DataProcMap.py code, ensure that the correct files are being read
+      4) Under the "Variables" category in the DataProcMap.py code, ensure that the freqRange is below 1.5 to filter out undesired
          frequencies
       5) Run the program to view the Average Perect Error of the system, Frequency vs Gain plot, and the radiation plots of the data
       
     Using the Diagnostic Database
-      1) Go to ECEN403-404-CTSDD > Gerardo Montemayor > Database and save it to your computer
+      1) Go to ECEN403-404-CTSDD > Gerardo Montemayor > Database.py and save it to your computer
       2) Open Database usig the IDE you have installed for python
-      3) Under the "I/O" category in the DataProcMap code, ensure that the correct files are being read
-      4) Under the "Variables" category in the DataProcMap code, ensure that the freqRange is below 1.5 to filter out undesired
+      3) Under the "I/O" category in the DataProcMap.py code, ensure that the correct files are being read
+      4) Under the "Variables" category in the DataProcMap.py code, ensure that the freqRange is below 1.5 to filter out undesired
          frequencies
       5) Run the program and select your desired options via the GUI that is displayed to view the Average Perect Error of the system,
          Frequency vs Gain plot, the radiation plots of the data, the 3D theoretical radiation plot, side lobe tracking, and the percent
