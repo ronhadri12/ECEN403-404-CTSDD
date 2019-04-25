@@ -221,7 +221,7 @@ def maindef(mesPhi, mesTheta, mesH, mesV,selections):
 
     #maximum parameter functions
     thmag, thang = maxmagnang(antfunc())
-    memag, meang = maxmagnang(testfunc2(theta))
+    memag, meang = maxmagnang(mesH)
     thang = theta.item(thang)
     #print(thang)
     meang = theta.item(meang)
