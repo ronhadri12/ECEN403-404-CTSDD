@@ -54,11 +54,12 @@
       5) Run the program to view the Average Perect Error of the system, Frequency vs Gain plot, and the radiation plots of the data
       
     Using the Diagnostic Database
-      1) Go to ECEN403-404-CTSDD > Gerardo Montemayor > Database.py and save it to your computer
-      2) Open Database usig the IDE you have installed for python
-      3) Under the "I/O" category in the DataProcMap.py code, ensure that the correct files are being read
-      4) Under the "Variables" category in the DataProcMap.py code, ensure that the freqRange is below 1.5 to filter out undesired
+      1) Go to ECEN403-404-CTSDD > Gerardo Montemayor > database.py and save it to your computer
+      2) Go to ECEN403-404-CTSDD > Gerardo Montemayor > dataproc.py and save it to your computer
+      3) Go to ECEN403-404-CTSDD > Gerardo Montemayor > gui.py and save it to your computer
+      4) If the dataproc.py from the previous subsystem is present in the folder, either overwrite or delete the old one
+      5) Open database.py, dataproc.py, gui.py usig the IDE you have installed for python
+      6) Under the "I/O" category in the dataproc.py code, ensure that the correct files are being read
+      7) Under the "Variables" category in the dataproc.py code, ensure that the freqRange is below 1.5 to filter out undesired
          frequencies
-      5) Run the program and select your desired options via the GUI that is displayed to view the Average Perect Error of the system,
-         Frequency vs Gain plot, the radiation plots of the data, the 3D theoretical radiation plot, side lobe tracking, and the percent
-         error plot between the measured and theoretical data
+      8) Run the program and select your desired options via the command line interface (CLI) that is displayed to view the Average              Percent Error of the system, Frequency vs Gain plot, the radiation plots of the data, the 3D theoretical radiation plot, side            lobe tracking, and the percent error plot between the measured and theoretical data
