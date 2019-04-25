@@ -301,16 +301,16 @@ while vehicle.channels['5'] >= 1200:		#if Flight Mode = 0 or 1 on controller, it
     print("Manual flight")
 
     while vehicle.channels['5'] > 1600:		#if Flight Mode = 0 on controller, it is gathering antenna coordinates
-	lat_ant = vehicle.location.global_frame.lat	#sets antenna latitude
-	long_ant = vehicle.location.global_frame.lon	#sets antenna londitude
+	lat_ant = 30.5931857 #vehicle.location.global_frame.lat	#sets antenna latitude
+	long_ant = -96.3361185 #vehicle.location.global_frame.lon	#sets antenna londitude
 	alt_ant = vehicle.location.global_frame.alt	#sets antenna altitude
-	heading = vehicle.heading					#sets compass heading of drone at antenna
+	heading = 146 #vehicle.heading					#sets compass heading of drone at antenna
         print("Gathering data")
         time.sleep(1)
     time.sleep(1)
 alt_list = [0] * number_paths                       # Creates list of altitudes for each flight path
 for i in range(0,len(alt_list),1):               # Drops each consecutive flight path by 1 meter from start altitude of the antenna altitude
-    alt_list[i] = alt_ant - (i * 2)
+    alt_list[i] = alt_ant - (i * 1)
 
 print(lat_ant)
 print(long_ant)
@@ -392,19 +392,23 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
     for i in range(0,total_points,1):	# Iterates through and travels to specified number of points
         if vehicle.channels['5'] >=  1200:
             break
-	    current_point = GPS_Coord_List[i]         # Extracts next GPS Location to go to from GPS_Coord_List
-	    lat_loop = current_point[0]               # Extracts the latidude of the next coordinate
+	current_point = GPS_Coord_List[i]         # Extracts next GPS Location to go to from GPS_Coord_List
+	lat_loop = current_point[0]               # Extracts the latidude of the next coordinate
         long_loop = current_point[1]              # Extracts the latidude of the next coordinate
         alt_loop = current_point[2]               # Extracts the altitude of the next coordinate
 
-       while ((vehicle.location.global_frame.alt) > (alt_loop * 1.003)):
+        while ((vehicle.location.global_frame.alt) > (alt_loop * 1.003)):
            set_attitude(thrust = 0.4)
+           time.sleep(2)
+           vehicle.simple_goto(LocationGlobal(lat_loop, long_loop, alt_loop),groundspeed = 1)
+           time.sleep(2.5)
+           print("Dropping Altitude")
            if vehicle.channels['5'] >=  1200:
                break
            time.sleep(0.5)
 
-       if ((vehicle.location.global_frame.alt) <= (alt_loop * 1.003)):
-           set_attitude(thrust = 0.5)
+       # if ((vehicle.location.global_frame.alt) <= (alt_loop * 1.003)):
+           #set_attitude(thrust = 0.5)
 
         vehicle.simple_goto(LocationGlobal(lat_loop, long_loop, alt_loop),groundspeed = 1)
         vehicle.flush()
