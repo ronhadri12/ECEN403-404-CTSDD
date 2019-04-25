@@ -8,6 +8,9 @@
 # Import Dronekit-Python
 from dronekit import connect, VehicleMode, time, LocationGlobal, LocationGlobalRelative
 from pymavlink import mavutil
+from Ron_Stuff import Rons_Stuff
+import os
+import measurements as data
 import time
 import math
 import scipy.integrate as integrate
@@ -222,9 +225,9 @@ antenna_frequency = float(antenna_frequency)                        #Converts fr
 
 antenna_length = input("Antenna Length (Must be positive integer): ")        # MUST be an odd number, to satisfy 'range' used in GPS_Coords function
 
+file_path = data.filePath()
 
-
-
+##########################################################################################################
 antenna_length = float(antenna_length)                          #Converts antenna length to float for later calculations
 
 wavelength = float(( 3 * (10 ** 8)) / antenna_frequency)
@@ -428,6 +431,9 @@ while vehicle.channels['5'] < 1200:		# If Flight Mode = 2 on controller, it is i
         print("At point: ", (i + 1))
         print("Target Alt.: ",  alt_loop)
         print("Current Alt.: ",vehicle.location.global_frame.alt)
+	
+	print("Starting measurements for point %d" % i)
+    	data.saveSignal(i, antenna_frequency, file_path)
 
     for t in range(1,1000, 1):                      # Drone waits for operator to take control once it has completed the path
         if vehicle.channels['5'] >=  1200:
