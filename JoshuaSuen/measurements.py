@@ -23,7 +23,6 @@ def filePath():
             drive_name = raw_input("Please enter the name of the external drive: ")
             file_path = "/media/pi/" + drive_name
             # Check for specified external drive
-            ### CHECK IF WHILE LOOP WORKS ###
             while not os.path.exists(file_path) or not drive_name.strip():     
                 drive_name = raw_input("%s is not an external drive. Export data "
                                        "to onboard storage? [Y/N] " % file_path)
