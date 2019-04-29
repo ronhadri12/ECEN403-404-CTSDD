@@ -1,16 +1,3 @@
-# This file contains the functions necessary for collecting data.
-
-# To import this function file, measurements.py, move it so that it is
-# located in the same directory and include the following line in the
-# main code:
-# import measurements.py as FILE
-# replacing FILE with an appropriate file name. To call functions from
-# the main code, use the following:
-# FILE.function(a, b)
-
-# Used for GPS data collection
-# from dronekit import connect
-
 # Used for signal data collection
 from pylab import psd
 from rtlsdr import RtlSdr
