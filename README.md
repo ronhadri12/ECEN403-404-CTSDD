@@ -48,7 +48,7 @@
     Processing the Data
       1) Go to ECEN403-404-CTSDD > Ron Hadri > DataProcMap.py and save it to your computer
       2) Open DataProcMap usig the IDE you have installed for python
-      3) Under the "I/O" category in the DataProcMap.py code, ensure that the correct files are being read
+      3) Under the "I/O" category in the DataProcMap041119.py code, ensure that the correct files are being read
       4) Under the "Variables" category in the DataProcMap.py code, ensure that the freqRange is below 1.5 to filter out undesired
          frequencies
       5) Run the program to view the Average Perect Error of the system, Frequency vs Gain plot, and the radiation plots of the data
